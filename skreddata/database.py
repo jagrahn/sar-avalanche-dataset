@@ -5,6 +5,12 @@ from dateutil import parser
 import datetime as dt
 from pymongo import MongoClient
 import json
+import hashlib
+
+
+    
+_DUMMY_STORE = {}
+
 
 LABEL_DESCRIPTION = {
     0: 'Avalanche(s) absent',
@@ -124,3 +130,29 @@ class Database:
 
     def get_length_with_label(self, label):
         return self.collection.count_documents({'label': label})
+
+
+@dataclasses.dataclass(frozen=False)
+class DummyDatabase:
+    
+    collection = _DUMMY_STORE
+    
+    def _hash_from_item(itm):
+        return hashlib.sha256(json.dumps(itm).encode("utf-8")).hexdigest()
+
+    def insert(self, item):
+        assert isinstance(item, (dict, Item))
+        item = Item(**item).asdict() if isinstance(item, dict) else item.asdict()
+        self.collection[item['uuid']] = item
+
+    def get_by_uuid(self, uuid):
+        if uuid in self.collection: 
+            return self.collection[uuid]
+
+    def get_all(self):
+        return list(self.collection.values())
+
+    def get_length(self):
+        return len(self.collection)
+    
+    
