@@ -1,0 +1,4 @@
+channels:
+  - defaults
+  - conda-forge
+ssl_verify: /etc/ssl/certs/ca-certificates.crt

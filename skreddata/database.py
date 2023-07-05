@@ -4,11 +4,11 @@ import shapely.wkt
 from dateutil import parser
 import datetime as dt
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 import json
 import hashlib
 
 
-    
 _DUMMY_STORE = {}
 
 
@@ -19,8 +19,10 @@ LABEL_DESCRIPTION = {
     3: 'Defected' 
 }
 
+
 def _as_datetime(time):
     return time if isinstance(time, dt.datetime) else parser.parse(time)
+
 
 @dataclasses.dataclass(frozen=True)
 class Item:
@@ -34,6 +36,7 @@ class Item:
     certainty: int = None
     source: str = None
     json: str = None
+    _id: ObjectId = None
 
     def __post_init__(self):
         # Type casting:
@@ -53,7 +56,7 @@ class Item:
 
 @dataclasses.dataclass(frozen=False)
 class Database:
-    host: str = 'localhost'
+    host: str = 'mongodb'
     port: int = 27017
     database: str = 'skreddata'
     collection: str = 'avl-v20230607'
@@ -67,16 +70,12 @@ class Database:
         items = []
         cursor = self.collection.find(*args, **kwargs)
         for item in cursor:
-            if '_id' in item: 
-                item.pop('_id')
             items.append(Item(**item))
         return items
     
     def find_one(self, *args, **kwargs): 
         item = self.collection.find_one(*args, **kwargs)
         if item is not None: 
-            if '_id' in item: 
-                item.pop('_id')
             item = Item(**item)
         return item
 

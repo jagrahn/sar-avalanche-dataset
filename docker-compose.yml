@@ -1,0 +1,57 @@
+version: "3.1"
+
+services:
+  scheduler:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    hostname: scheduler
+    ports:
+      - "8786:8786"
+      - "8787:8787"
+    command: ["dask-scheduler"]
+    volumes:
+      - /data/cache:/data/cache
+      - /ssd_data/auxdata/dem/:/ssd_data/auxdata/dem/
+    networks:
+      - skrednet
+
+  worker:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    command: ["dask-worker", "tcp://scheduler:8786"]
+    # For Docker swarm you can specify multiple workers, this is ignored by `docker-compose up`
+    deploy:
+      replicas: 2
+    volumes:
+      - /data/cache:/data/cache
+      - /ssd_data/auxdata/dem/:/ssd_data/auxdata/dem/
+    networks:
+      - skrednet
+
+  skreddata:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    command: ["bash"]
+    environment:
+      - DASK_SCHEDULER_ADDRESS="tcp://scheduler:8786"
+    volumes:
+      - /data/cache:/data/cache
+      - /ssd_data/auxdata/dem/:/ssd_data/auxdata/dem/
+    networks:
+      - skrednet
+
+  mongodb:
+    image: mongo
+    ports:
+      - '27017:27017'
+    volumes:
+      - /ssd_data/skreddata/db:/data/db
+    networks:
+      - skrednet
+
+networks:
+  skrednet:
+    driver: bridge

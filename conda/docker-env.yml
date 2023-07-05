@@ -1,0 +1,23 @@
+name: skreddata
+channels:
+  - conda-forge
+dependencies:
+  - dask
+  - rasterio
+  - astropy
+  - xmltodict
+  - pyproj
+  - h5py
+  - jsonschema
+  - geopandas
+  - typer
+  - pymongo
+  - asf_search
+  - pykrige
+  - quaternion
+  - simplekml
+  - tqdm
+  - pip
+  - pip:
+    - opencv-contrib-python
+    - remotezip

@@ -68,9 +68,11 @@ def from_geojson(
           
           output.update(res)
      
-     cluster = distributed.LocalCluster()
-     with distributed.Client(cluster):
-          output = dask.compute(output)[0] 
+     #cluster = distributed.LocalCluster()
+     #with distributed.Client(cluster):
+     #with dask.config.set(scheduler='threads'):
+     
+     output = dask.compute(output)[0] 
      
      if print: 
           pprint(output)
