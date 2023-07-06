@@ -23,13 +23,14 @@ RUN apt-get update && \
 
 RUN conda install -n base -c conda-forge conda-libmamba-solver; \
     conda config --set solver libmamba; \
-    conda env create -f conda/docker-env.yml; 
+    conda env update -n base --file conda/docker-env.yml --prune
+#    conda env create -f conda/docker-env.yml; 
 
 ENV PYTHONPATH "${PYTHONPATH}:/app/dependencies/gdar-core:/app/dependencies/gdar-plus:/app/dependencies/gdar-geocoding"
 ENV PYTHONPATH "${PYTHONPATH}:/app/dependencies/gtile:/app/dependencies/gtile/plugins/gtile-sat"
 
 COPY ./bin/skreddata skreddata-app
 
-ENTRYPOINT [ "bash" ]
+#ENTRYPOINT [ "bash" ]
 #ENTRYPOINT [ "python3" ]
 #ENTRYPOINT [ "/opt/conda/envs/skreddata/bin/python3", "skreddata-app" ] 

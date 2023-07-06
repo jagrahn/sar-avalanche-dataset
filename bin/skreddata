@@ -64,7 +64,7 @@ app.add_typer(gen.app, rich_help_panel="Sample generation" )
 
 
 if __name__ == "__main__":
-    client = distributed.Client('127.0.0.1:8786')
+    client = distributed.Client('tcp://scheduler:8786')
     with client:
         app()
 

@@ -82,11 +82,13 @@ class Database:
     def insert(self, item):
         assert isinstance(item, (dict, Item))
         item = Item(**item).asdict() if isinstance(item, dict) else item.asdict()
+        item.pop('_id')
         self.collection.insert_one(item)
 
     def replace(self, item):
         assert isinstance(item, (dict, Item))
         item = Item(**item).asdict() if isinstance(item, dict) else item.asdict()
+        item.pop('_id')
         self.collection.replace_one({'uuid': item['uuid']}, item)
 
     def remove_by_uuid(self, uuid):

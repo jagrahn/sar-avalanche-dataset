@@ -19,7 +19,8 @@ def from_geojson(
           comment: Optional[str] = typer.Option(None, help='Column name representing comments. '), 
           epsg: Optional[int] = typer.Option(None, help='EPSG code. Taken as the UTM zone closest to the AOI if not given. '), 
           shape: Optional[int] = typer.Option(1024, help='Image shape (assumed same in x and y). '),
-          print: Optional[bool] = typer.Option(True, help='Print output. ')
+          print: Optional[bool] = typer.Option(True, help='Print output. '), 
+          force: Optional[bool] = typer.Option(False, help='Force processing even if item exists in database. '), 
      ):
           
      import os
@@ -50,7 +51,7 @@ def from_geojson(
           row = df.iloc[i]
           
           # Check database for UUID if given: 
-          if uuid is not None and db.get_by_uuid(row[uuid]):
+          if not force and uuid is not None and db.get_by_uuid(row[uuid]) is not None:
                logger.info(f'UUID exists in database, skipping UUID={row[uuid]}')
                continue 
           
@@ -63,7 +64,8 @@ def from_geojson(
                shape=(shape, shape), 
                uuid=str(row[uuid]) if uuid is not None else None, 
                label=row[label] if label is not None else None, 
-               comment=row[comment] if comment is not None else None
+               comment=row[comment] if comment is not None else None, 
+               force=force
           )
           
           output.update(res)

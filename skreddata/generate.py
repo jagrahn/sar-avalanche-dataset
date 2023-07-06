@@ -191,7 +191,7 @@ def search_grd_pairs(aoi, t_0, t_1, space_buffer=7_500, exact_times=False):
 
 
 @decorators.input_as_copy
-def main(aoi, toi, folder, refsys=None, shape=None, uuid=None, comment=None, label=None): 
+def main(aoi, toi, folder, refsys=None, shape=None, uuid=None, comment=None, label=None, force=False): 
     
     # AOI: 
     aoi_wkt = shapetools.misc_to_wkt(aoi)
@@ -259,8 +259,12 @@ def main(aoi, toi, folder, refsys=None, shape=None, uuid=None, comment=None, lab
         
         # Check database for UUID: 
         if db.get_by_uuid(_uuid) is not None:
-            logger.info(f'UUID exists in database, skipping UUID={_uuid}')
-            continue  
+            if force: 
+                logger.info(f'UUID exists in database but forced processing, removing UUID={_uuid}')
+                db.remove_by_uuid(_uuid)
+            else: 
+                logger.info(f'UUID exists in database, skipping UUID={_uuid}')
+                continue  
         
         output_files = []
         

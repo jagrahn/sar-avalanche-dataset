@@ -23,7 +23,7 @@ services:
     command: ["dask-worker", "tcp://scheduler:8786"]
     # For Docker swarm you can specify multiple workers, this is ignored by `docker-compose up`
     deploy:
-      replicas: 2
+      replicas: 10
     volumes:
       - /data/cache:/data/cache
       - /ssd_data/auxdata/dem/:/ssd_data/auxdata/dem/
