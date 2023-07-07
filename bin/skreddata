@@ -6,9 +6,7 @@ import warnings
 from rich.logging import RichHandler, Console
 import typer
 import pathlib
-import dask
 from dask import distributed
-
 from skreddata.cli import gen
 
 
