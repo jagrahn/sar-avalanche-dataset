@@ -56,7 +56,7 @@ class Item:
 
 @dataclasses.dataclass(frozen=False)
 class Database:
-    host: str = 'mongodb'
+    host: str = 'localhost'
     port: int = 27017
     database: str = 'skreddata'
     collection: str = 'avl-v20230607'

@@ -1,4 +1,4 @@
-version: "3.1"
+version: "3.7"
 
 services:
   scheduler:
@@ -52,6 +52,24 @@ services:
     networks:
       - skrednet
 
+  skredlab:
+    build: 
+      context: ../sar-avalanche-annotation/
+      dockerfile: Dockerfile
+    secrets:
+      - ssh_id_rsa
+    ports:
+      - '8501:8501'
+    volumes:
+      - /ssd_data/skreddata/data/avalanche_input/:/ssd_data/skreddata/data/avalanche_input/
+    networks:
+      - skrednet
+
 networks:
   skrednet:
     driver: bridge
+
+    
+secrets:
+  ssh_id_rsa:
+    file: /home/AD.NORCERESEARCH.NO/jgra/.ssh/id_ed25519
