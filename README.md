@@ -17,7 +17,7 @@ docker run -d -p 27017:27017 -v /ssd_data/skreddata/db:/data/db --name skreddata
 ## Access database through skreddata python API
 Make conda environment with appropriate python dependencies: 
 ```bash
-conda create --name skreddata-db ipython pymongo shapely 
+conda create --name skreddata-db ipython pymongo shapely python-dateutil
 ```
 
 Activate conda environment: 
