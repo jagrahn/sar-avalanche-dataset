@@ -36,7 +36,7 @@ class Item:
     certainty: int = None
     source: str = None
     json: str = None
-    _id: ObjectId = None
+    _id: str = None
 
     def __post_init__(self):
         # Type casting:
@@ -50,6 +50,8 @@ class Item:
         # Dump json to string:
         if self.json is not None and not isinstance(self.json, str):
             super().__setattr__('json', json.dumps(self.json))
+            
+        super().__setattr__('_id', str(self._id))
     
     def asdict(self): 
         return dataclasses.asdict(self)
