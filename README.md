@@ -14,6 +14,13 @@ docker run -d -p 27017:27017 -v /ssd_data/skreddata/db:/data/db --name skreddata
 ```
 
 # Usage
+## Start database
+Unless running, start the database: 
+```bash
+docker start skreddata-mongo
+```
+
+
 ## Access database through skreddata python API
 Make conda environment with appropriate python dependencies: 
 ```bash

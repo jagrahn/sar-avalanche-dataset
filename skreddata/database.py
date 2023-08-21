@@ -53,6 +53,11 @@ class Item:
     
     def asdict(self): 
         return dataclasses.asdict(self)
+    
+    def __hash__(self):
+        return hash((self.uuid, self.geometry, self.t_0, self.t_1, self.label, self.comment,
+                     self.type, self.certainty, self.source, self.json, self._id))
+
 
 @dataclasses.dataclass(frozen=False)
 class Database:
