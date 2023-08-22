@@ -56,6 +56,7 @@ class Item:
     def asdict(self): 
         return dataclasses.asdict(self)
 
+
 @dataclasses.dataclass(frozen=False)
 class Database:
     host: str = 'localhost'
@@ -126,10 +127,10 @@ class Database:
         return self.collection.count_documents({})
 
     def get_length_unlabeled(self):
-        return self.collection.count_documents({'label': {'$exists': False}})
+        return self.collection.count_documents({'$or': [{'label': {'$exists': False}}, {'label': None}]})
 
     def get_length_labeled(self):
-        return self.collection.count_documents({'label': {'$exists': True}})
+        return self.collection.count_documents({'label': {'$exists': True, '$ne': None}})
 
     def get_length_with_label(self, label):
         return self.collection.count_documents({'label': label})
