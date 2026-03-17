@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "skreddata"
+version = "0.1.0"
+description = "Interface to the SAR avalanche dataset"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "NORCE - The Norwegian Research Center AS" },
+]
+dependencies = [
+    "numpy",
+    "scipy",
+    "xmltodict",
+    "python-dateutil",
+    "pyproj",
+    "pykrige",
+    "astropy",
+    "quaternion",
+    "shapely",
+    "rasterio>=1.0.0",
+    "fiona>=1.8.4",
+    "h5py",
+    "requests",
+    "simplekml",
+    "colorama",
+    "xarray",
+    "matplotlib",
+    "tqdm",
+    "spatialite",
+    "jsonschema",
+    "rtree",
+    "numpy-quaternion",
+    "dask[complete]",
+    "geopandas",
+    "typer",
+    "rich",
+    "pymongo",
+    "asf_search",
+    "remotezip",
+]
+
+[project.scripts]
+skreddata = "skreddata.cli.app:main"
+
+[tool.setuptools.packages.find]
+include = ["skreddata*"]

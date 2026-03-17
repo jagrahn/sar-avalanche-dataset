@@ -24,7 +24,8 @@ rtree
 numpy-quaternion
 dask[complete]
 geopandas
-typer[all]
+typer
+rich
 pymongo
 asf_search
 remotezip

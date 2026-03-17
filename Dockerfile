@@ -1,41 +1,31 @@
 FROM daskdev/dask
 
-COPY . /app
+COPY --from=ghcr.io/astral-sh/uv:0.9.22 /uv /uvx /bin/
+
 WORKDIR /app
 SHELL ["/bin/bash", "--login", "-c"]
 
-# SSL certificate setup: 
-COPY ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
-COPY .myopenssl.conf /root/.myopenssl.conf
-ENV OPENSSL_CONF=/root/.myopenssl.conf
-ENV SPATIALITE_LIBRARY_PATH=mod_spatialite
-
-# Time zone: 
 ENV TZ=Europe/Oslo
+ENV SPATIALITE_LIBRARY_PATH=mod_spatialite
+ENV GDAL_CONFIG=/usr/bin/gdal-config
+ENV UV_LINK_MODE=copy
+ENV UV_COMPILE_BYTECODE=1
+ENV PATH="/app/.venv/bin:${PATH}"
+
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# Apps: 
 RUN apt-get update && \
-    apt-get install --yes --no-install-recommends apt-utils && \
-    apt-get install --yes ca-certificates openssl && \
-    apt-get install --yes libgdal-dev && \
-    apt-get install --yes libsqlite3-mod-spatialite && \
-    apt-get install --yes screen
+    apt-get install --yes --no-install-recommends \
+        build-essential \
+        ca-certificates \
+        gdal-bin \
+        libgdal-dev \
+        libspatialindex-dev \
+        libsqlite3-mod-spatialite && \
+    rm -rf /var/lib/apt/lists/*
 
-# Conda: 
-RUN conda config --set ssl_verify /etc/ssl/certs/ca-certificates.crt; \
-    conda config --set channels conda-forge; \
-    conda install -n base conda-libmamba-solver; \
-    conda config --set solver libmamba; \
-    conda env update -n base --file conda/docker-env.yml --prune
-#    conda env create -f conda/docker-env.yml; 
+COPY . /app
 
-# Local python dependencies: 
-ENV PYTHONPATH "${PYTHONPATH}:/app/dependencies/gdar-core:/app/dependencies/gdar-plus:/app/dependencies/gdar-geocoding"
-ENV PYTHONPATH "${PYTHONPATH}:/app/dependencies/gtile:/app/dependencies/gtile/plugins/gtile-sat"
+RUN uv sync --frozen --no-dev
 
-# Entry point: 
-#ENTRYPOINT [ "bash" ]
-#ENTRYPOINT [ "python3" ]
-ENTRYPOINT [ "python3", "/app/bin/skreddata" ] 
+CMD ["skreddata"]
