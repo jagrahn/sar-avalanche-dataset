@@ -1,56 +1,50 @@
-Interface to the SAR avalanche dataset. 
+# skreddata
 
-**NOTE**: Currently only working locally on `tos-1040`. 
+Small Python API and CLI for the `skreddata` MongoDB database.
 
-# Setup
-Pull mongo docker image:
-```bash
-docker pull mongo:latest
-```
+## 1. Create UV environment
 
-Run database server:
-```bash
-docker run -d -p 27017:27017 -v /ssd_data/skreddata/db:/data/db --name skreddata-mongo mongo:latest
-```
-
-# Usage
-## Start database
-Unless running, start the database:
-```bash
-docker start skreddata-mongo
-```
-
-
-## Access database through skreddata python API
-Create the local environment with UV:
 ```bash
 uv sync
 ```
 
-Access the database in Python:
-```python
-from skreddata import database
-db = database.Database()
+## 2. Start database
+
+```bash
+podman run -d \
+  --name skreddata-mongo \
+  -p 27017:27017 \
+  -v skreddata-mongodb-data:/data/db \
+  docker.io/library/mongo:latest
 ```
 
-Test interfacing the database, for example, by getting the total length:
+Defaults:
+`host=localhost`, `port=27017`, `database=skreddata`, `collection=avl-v20230607`
+
+## 3. Access database via Python
+
 ```python
+from skreddata import Database
+
+db = Database()
 print(db.get_length())
+print(db.get_by_uuid("SOME_UUID"))
 ```
 
-You can also run one-off commands without activating a shell:
+## 4. Access database via CLI
+
 ```bash
-uv run python -c "from skreddata import database; print(database.Database().get_length())"
+uv run skreddata ping
+uv run skreddata count
+uv run skreddata get SOME_UUID
+uv run skreddata list --limit 5
 ```
 
-## Build docker image
-Build the image with Docker:
+## 5. Back up database
+
 ```bash
-docker build -t skreddata .
+uv run skreddata backup /NORCE/Data/600/60090/long_lived_JGRA/from_lysorgel/skreddata/database/mongo/skreddata.archive.gz --container skreddata-mongo
+uv run skreddata restore /NORCE/Data/600/60090/long_lived_JGRA/from_lysorgel/skreddata/database/mongo/skreddata.archive.gz --container skreddata-mongo --drop
 ```
 
-## Access database with mongo shell directly
-
-```bash 
-docker exec -it skreddata-mongo mongosh
-```
+Without `--container`, `skreddata` expects `mongodump` and `mongorestore` on `PATH`.
